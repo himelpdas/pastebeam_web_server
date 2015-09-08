@@ -1,0 +1,35 @@
+starting fresh:
+
+git clone --recursive https://github.com/web2py/web2py.git
+
+rename web2py folder to web_server
+
+cd web_server
+
+cat .gitignore > .hgignore
+
+nano .hgignore
+
+add to top: syntax: glob (http://stackoverflow.com/questions/4349043/interconversion-of-gitignore-and-hgignore)
+
+rm -r <all .git* stuff>
+
+hg init
+
+cd .hg
+
+nano hgrc
+
+[ui]
+username = Himel Das (Inspiron Xubuntu) <himel.p.das@gmail.com>
+
+[paths]
+default = ssh://hg@bitbucket.org/himeldas/pastebeam_web_server
+
+ctrl x and save
+
+cd ..
+
+hg commit -m "first push"
+
+hg push
