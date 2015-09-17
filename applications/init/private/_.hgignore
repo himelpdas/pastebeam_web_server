@@ -1,0 +1,21 @@
+ # from https://github.com/mdipierro/web2py-plugins/blob/master/.hgignore
+# rename to .hgignore and put in root web2py folder
+
+# use global syntax 
+syntax: glob
+
+*.pyc
+*.pyo
+*~
+*.bak
+*.1
+.*
+#*
+cron/*
+languages/*
+sessions/*
+uploads/*
+errors/*
+cache/*
+databases/*
+views/generic.*
