@@ -94,6 +94,8 @@ auth.settings.reset_password_requires_verification = True
 def initializeDatabase(form):
 	#MONGO_CONTACTS.
 	my_password = form.vars.password_two
-	my_id = form.vars.id
+	my_id = db._adapter.object_id(form.vars.id) #http://stackoverflow.com/questions/26614981/mongodb-web2py-working-with-objectids
+	print my_password, my_id
 	MONGO_ACCOUNTS.update_one({"_id":my_id}, {"$set":{"contacts":[]}})
+
 auth.settings.register_onaccept = [initializeDatabase]
