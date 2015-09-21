@@ -90,3 +90,10 @@ auth.settings.reset_password_requires_verification = True
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
+
+def initializeDatabase(form):
+	#MONGO_CONTACTS.
+	my_password = form.vars.password_two
+	my_id = form.vars.id
+	MONGO_ACCOUNTS.update_one({"_id":my_id}, {"$set":{"contacts":[]}})
+auth.settings.register_onaccept = [initializeDatabase]
