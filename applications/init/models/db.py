@@ -91,11 +91,20 @@ auth.settings.reset_password_requires_verification = True
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
 
-def initializeDatabase(form):
-	#MONGO_CONTACTS.
-	my_password = form.vars.password_two
-	my_id = db._adapter.object_id(form.vars.id) #http://stackoverflow.com/questions/26614981/mongodb-web2py-working-with-objectids
-	print my_password, my_id
-	MONGO_ACCOUNTS.update_one({"_id":my_id}, {"$set":{"contacts_list":[]}})
+def initializeAccount(form):
+    "this is run after db insert and form.vars has actual values in the db"
+    my_password = form.vars.password_two #the raw password in the password verification field
+    my_id = db._adapter.object_id(form.vars.id) #http://stackoverflow.com/questions/26614981/mongodb-web2py-working-with-objectids
+    print my_password, my_id
+    rsa_keys = SecureRSAKeyPair(my_password, pbkdf2 = True)
+    print rsa_keys.public_key, rsa_keys.private_key
+    MONGO_ACCOUNTS.update_one({"_id":my_id},
+        {"$set":{
+            "contacts_list":[],
+            "rsa_public_key": rsa_keys.public_key,
+            "rsa_private_key": rsa_keys.private_key,
+            "rsa_pbkdf2_salt": Binary(rsa_keys.salt),
+        }}
+    )
 
-auth.settings.register_onaccept = [initializeDatabase]
+auth.settings.register_onaccept = [initializeAccount]
