@@ -22,7 +22,7 @@ class SecureRSAKeyPair(object):
         self.passphrase = None
         self.salt = None
         if pbkdf2:
-            self.salt = self.random_gen(8) #never reuse salt again to generate a key derivation
+            self.salt = self.random_gen(8) #never reuse salt again to generate a new key derivation
             self.createPassphrase()
         self.generate()
     def createPassphrase(self):
