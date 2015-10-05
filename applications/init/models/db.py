@@ -93,7 +93,7 @@ auth.settings.reset_password_requires_verification = True
 
 def initializeAccount(form):
     "this is run after db insert and form.vars has actual values in the db"
-    #form value from: on_register OR logged_in_user
+    #form value from: on_register OR logged_in_user #already accepted by db, so these values are guaranteed to be user's password
     my_password = form.vars.password_two or form.vars.new_password2 or 1/0 #the unencrypted password on register is password_two and new_password2 when logged in #the raw password in the password verification field
     my_id = db._adapter.object_id(form.vars.id or auth.user_id or 1/0) #http://stackoverflow.com/questions/26614981/mongodb-web2py-working-with-objectids
     print my_password, my_id
