@@ -2,7 +2,6 @@ from pymongo import MongoClient
 _client = MongoClient()
 _database = _client.test_database
 MONGO_ACCOUNTS = _database.auth_user
-MONGO_CONTACTS = _database.contacts
 
 import bson.json_util as json
 from bson.binary import Binary
@@ -34,3 +33,10 @@ class SecureRSAKeyPair(object):
     def generate(self):
         self.private_key = self.key.exportKey(passphrase = self.passphrase or self.password)
         self.public_key = self.key.publickey().exportKey()
+
+
+#MUST BE KEPT OUTSIDE CALLBACK FUNCTION!
+import zmq
+publisher_context = zmq.Context()
+publisher_socket = publisher_context.socket(zmq.PUB)
+publisher_socket.connect("tcp://localhost:%s" % 8882)

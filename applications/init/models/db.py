@@ -93,8 +93,9 @@ auth.settings.reset_password_requires_verification = True
 
 def initializeAccount(form):
     "this is run after db insert and form.vars has actual values in the db"
-    my_password = form.vars.password_two #the raw password in the password verification field
-    my_id = db._adapter.object_id(form.vars.id) #http://stackoverflow.com/questions/26614981/mongodb-web2py-working-with-objectids
+    #form value from: on_register OR logged_in_user
+    my_password = form.vars.password_two or form.vars.new_password2 or 1/0 #the unencrypted password on register is password_two and new_password2 when logged in #the raw password in the password verification field
+    my_id = db._adapter.object_id(form.vars.id or auth.user_id or 1/0) #http://stackoverflow.com/questions/26614981/mongodb-web2py-working-with-objectids
     print my_password, my_id
     rsa_keys = SecureRSAKeyPair(my_password, pbkdf2 = True)
     print rsa_keys.public_key, rsa_keys.private_key
@@ -107,4 +108,15 @@ def initializeAccount(form):
         }}
     )
 
+def killAllAccountWebSockets(form):
+    kill_id = db._adapter.object_id(auth.user_id)
+    kill_account = MONGO_ACCOUNTS.find_one({"_id":kill_id})
+    kill_email = kill_account["email"].lower()
+
+    publisher_socket.send_string(u"%s %s"%(kill_email, u"kill" ) )
+    #print form.vars.new_password2
+
+
 auth.settings.register_onaccept = [initializeAccount]
+auth.settings.profile_onaccept = [killAllAccountWebSockets]
+auth.settings.change_password_onaccept = [initializeAccount, killAllAccountWebSockets] #do killall last to prevent race with websocket #HIDDEN FROM DOCS!!! Also change_password_onvalidation
